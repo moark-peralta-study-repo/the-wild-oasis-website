@@ -1,8 +1,13 @@
 import { UsersIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
+import { CabinAPIResponse } from "@/app/types/types";
 
-function CabinCard({ cabin }) {
+type CabinCardProps = {
+  cabin: CabinAPIResponse;
+};
+
+function CabinCard({ cabin }: CabinCardProps) {
   const { id, name, maxCapacity, regularPrice, discount, image } = cabin;
 
   return (

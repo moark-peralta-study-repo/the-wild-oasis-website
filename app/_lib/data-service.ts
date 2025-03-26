@@ -1,10 +1,11 @@
 import { eachDayOfInterval } from "date-fns";
 import { supabase } from "@/app/_lib/supabase";
+import { CabinAPIResponse } from "@/app/types/types";
 
 /////////////
 // GET
 
-export async function getCabin(id) {
+export async function getCabin(id: number) {
   const { data, error } = await supabase
     .from("cabins")
     .select("*")
@@ -35,7 +36,7 @@ export async function getCabinPrice(id) {
   return data;
 }
 
-export const getCabins = async function () {
+export const getCabins: () => Promise<CabinAPIResponse[]> = async function () {
   const { data, error } = await supabase
     .from("cabins")
     .select("id, name, maxCapacity, regularPrice, discount, image")
@@ -46,11 +47,11 @@ export const getCabins = async function () {
     throw new Error("Cabins could not be loaded");
   }
 
-  return data;
+  return data as CabinAPIResponse[];
 };
 
 // Guests are uniquely identified by their email address
-export async function getGuest(email) {
+export async function getGuest(email: string) {
   const { data, error } = await supabase
     .from("guests")
     .select("*")
