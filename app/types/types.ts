@@ -1,8 +1,9 @@
-export type CabinAPIResponse = {
+export type CabinsAPIResponse = {
   id: number;
+  name: string;
   maxCapacity: number;
   regularPrice: number;
   discount: number;
   image: string;
-  name: string;
+  description: string;
 };
