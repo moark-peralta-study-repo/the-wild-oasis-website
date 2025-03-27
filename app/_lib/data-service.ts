@@ -1,6 +1,7 @@
 import { eachDayOfInterval } from "date-fns";
 import { supabase } from "@/app/_lib/supabase";
 import { CabinsAPIResponse } from "@/app/types/types";
+import { notFound } from "next/navigation";
 
 /////////////
 // GET
@@ -17,6 +18,7 @@ export async function getCabin(id: number): Promise<CabinsAPIResponse> {
 
   if (error) {
     console.error(error);
+    notFound();
   }
 
   return data as CabinsAPIResponse;
