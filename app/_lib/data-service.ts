@@ -1,4 +1,4 @@
-import { eachDayOfInterval } from "date-fns";
+// import { eachDayOfInterval } from "date-fns";
 import { supabase } from "@/app/_lib/supabase";
 import { CabinsAPIResponse } from "@/app/types/types";
 import { notFound } from "next/navigation";
@@ -24,20 +24,6 @@ export async function getCabin(id: number): Promise<CabinsAPIResponse> {
   return data as CabinsAPIResponse;
 }
 
-export async function getCabinPrice(id) {
-  const { data, error } = await supabase
-    .from("cabins")
-    .select("regularPrice, discount")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    console.error(error);
-  }
-
-  return data;
-}
-
 export const getCabins: () => Promise<CabinsAPIResponse[]> = async function () {
   const { data, error } = await supabase
     .from("cabins")
@@ -51,6 +37,20 @@ export const getCabins: () => Promise<CabinsAPIResponse[]> = async function () {
 
   return data as CabinsAPIResponse[];
 };
+
+export async function getCabinPrice(id) {
+  const { data, error } = await supabase
+    .from("cabins")
+    .select("regularPrice, discount")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error(error);
+  }
+
+  return data;
+}
 
 // Guests are uniquely identified by their email address
 export async function getGuest(email: string) {
