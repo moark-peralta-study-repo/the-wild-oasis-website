@@ -1,14 +1,24 @@
-import CabinList from "@/app/_components/CabinList";
+import CabinList, { FilterSize } from "@/app/_components/CabinList";
 import { Suspense } from "react";
 import Spinner from "@/app/_components/Spinner";
 
-export const revalidate = 3600;
+type PageProps = {
+  searchParams: Record<string, string | undefined>;
+};
+
+// export const revalidate = 3600;
 
 export const metadata = {
   title: "Cabins",
 };
 
-export default function Page() {
+const validFilters: FilterSize[] = ["small", "medium", "large", "all"];
+
+export default function Page({ searchParams }: PageProps) {
+  const filterParam = searchParams?.capacity;
+  const filter: FilterSize = validFilters.includes(filterParam as FilterSize)
+    ? (filterParam as FilterSize)
+    : "all";
   return (
     <div>
       <h1 className="text-4xl mb-5 text-accent-400 font-medium">
@@ -24,7 +34,7 @@ export default function Page() {
       </p>
 
       <Suspense fallback={<Spinner />}>
-        <CabinList />
+        <CabinList filter={filter} />
       </Suspense>
     </div>
   );
