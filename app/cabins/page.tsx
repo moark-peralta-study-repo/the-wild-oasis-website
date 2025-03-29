@@ -1,6 +1,7 @@
 import CabinList, { FilterSize } from "@/app/_components/CabinList";
 import { Suspense } from "react";
 import Spinner from "@/app/_components/Spinner";
+import Filter from "@/app/_components/Filter";
 
 type PageProps = {
   searchParams: Record<string, string | undefined>;
@@ -33,7 +34,10 @@ export default function Page({ searchParams }: PageProps) {
         Welcome to paradise.
       </p>
 
-      <Suspense fallback={<Spinner />}>
+      <div className="flex justify-end mb-8">
+        <Filter />
+      </div>
+      <Suspense key={filter} fallback={<Spinner />}>
         <CabinList filter={filter} />
       </Suspense>
     </div>
