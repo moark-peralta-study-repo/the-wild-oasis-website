@@ -1,6 +1,6 @@
 // import { eachDayOfInterval } from "date-fns";
 import { supabase } from "@/app/_lib/supabase";
-import { CabinsAPIResponse } from "@/app/types/types";
+import { CabinsAPIResponse, SettingsAPIResponse } from "@/app/types/types";
 import { notFound } from "next/navigation";
 
 /////////////
@@ -126,8 +126,8 @@ export async function getBookedDatesByCabinId(cabinId) {
 
   return bookedDates;
 }
-
-export async function getSettings() {
+//
+export async function getSettings(): Promise<SettingsAPIResponse> {
   const { data, error } = await supabase.from("settings").select("*").single();
 
   if (error) {
@@ -135,8 +135,9 @@ export async function getSettings() {
     throw new Error("Settings could not be loaded");
   }
 
-  return data;
+  return data as SettingsAPIResponse;
 }
+//
 
 export async function getCountries() {
   try {
