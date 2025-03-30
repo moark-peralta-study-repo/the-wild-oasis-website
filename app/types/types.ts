@@ -22,3 +22,26 @@ export type UserAuthResponse = {
   email: string;
   image: string;
 };
+
+export type GuestsAPIResponse = {
+  id: number;
+  fullName: string;
+  email: string;
+  nationalId: string;
+  nationality: string;
+  countryFlag: string;
+};
+
+export type BookingsAPIResponse = {
+  id: number;
+  startDate: string;
+  endDate: string;
+  numNights: number;
+  numGuests: number;
+  totalPrice: number;
+  guestId: number;
+  cabins: {
+    name: string;
+    image: string;
+  }[];
+}[];
