@@ -1,11 +1,15 @@
+// "use client";
+
 import { CabinsAPIResponse } from "@/app/types/types";
+import { useReservation } from "@/app/contexts/ReservationContext";
 
 type ReservationProps = {
   cabin: CabinsAPIResponse;
 };
 
 function ReservationForm({ cabin }: ReservationProps) {
-  // CHANGE
+  // const { range } = useReservation();
+
   const { maxCapacity } = cabin;
 
   return (
