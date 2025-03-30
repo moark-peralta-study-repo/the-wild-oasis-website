@@ -1,4 +1,4 @@
-// import { eachDayOfInterval } from "date-fns";
+import { eachDayOfInterval } from "date-fns";
 import { supabase } from "@/app/_lib/supabase";
 import { CabinsAPIResponse, SettingsAPIResponse } from "@/app/types/types";
 import { notFound } from "next/navigation";
