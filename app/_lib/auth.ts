@@ -1,5 +1,11 @@
-import NextAuth from "next-auth";
+import NextAuth, { Session } from "next-auth";
 import Google from "next-auth/providers/google";
+import { NextRequest } from "next/server";
+
+type AuthType = {
+  auth: Session | null;
+  request: NextRequest;
+};
 
 const authConfig = {
   providers: [
@@ -9,13 +15,18 @@ const authConfig = {
     }),
   ],
   callbacks: {
-    authorized({ auth, request }) {
+    authorized({ auth, request }: AuthType) {
       return !!auth?.user;
     },
+  },
+  pages: {
+    signIn: "/login",
   },
 };
 
 export const {
   auth,
+  signIn,
+  signOut,
   handlers: { GET, POST },
 } = NextAuth(authConfig);
