@@ -16,3 +16,9 @@ export type SettingsAPIResponse = {
   maxNumberOfGuestsPerBooking: number;
   breakfastPrice: number;
 };
+
+export type UserAuthResponse = {
+  name: string;
+  email: string;
+  image: string;
+};
