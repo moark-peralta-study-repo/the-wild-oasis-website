@@ -1,6 +1,12 @@
 import { eachDayOfInterval } from "date-fns";
 import { supabase } from "@/app/_lib/supabase";
-import { CabinsAPIResponse, SettingsAPIResponse } from "@/app/types/types";
+import {
+  BookingsAPIResponse,
+  CabinsAPIResponse,
+  CreateGuestInput,
+  GuestsAPIResponse,
+  SettingsAPIResponse,
+} from "@/app/types/types";
 import { notFound } from "next/navigation";
 
 /////////////
@@ -11,7 +17,7 @@ export async function getCabin(id: number): Promise<CabinsAPIResponse> {
     .from("cabins")
     .select("*")
     .eq("id", id)
-    .single();
+    .single<CabinsAPIResponse>();
 
   // For testing
   // await new Promise((res) => setTimeout(res, 1000));
@@ -21,7 +27,7 @@ export async function getCabin(id: number): Promise<CabinsAPIResponse> {
     notFound();
   }
 
-  return data as CabinsAPIResponse;
+  return data;
 }
 
 export const getCabins: () => Promise<CabinsAPIResponse[]> = async function () {
@@ -38,12 +44,14 @@ export const getCabins: () => Promise<CabinsAPIResponse[]> = async function () {
   return data as CabinsAPIResponse[];
 };
 
-export async function getCabinPrice(id) {
+export async function getCabinPrice(
+  id: number,
+): Promise<Pick<CabinsAPIResponse, "regularPrice" | "discount"> | null> {
   const { data, error } = await supabase
     .from("cabins")
     .select("regularPrice, discount")
     .eq("id", id)
-    .single();
+    .single<Pick<CabinsAPIResponse, "regularPrice" | "discount">>();
 
   if (error) {
     console.error(error);
@@ -53,23 +61,27 @@ export async function getCabinPrice(id) {
 }
 
 // Guests are uniquely identified by their email address
-export async function getGuest(email: string) {
+export async function getGuest(
+  email: string,
+): Promise<GuestsAPIResponse | null> {
   const { data, error } = await supabase
     .from("guests")
     .select("*")
     .eq("email", email)
-    .single();
+    .single<GuestsAPIResponse>();
 
   // No error here! We handle the possibility of no guest in the sign in callback
   return data;
 }
 
-export async function getBooking(id) {
+export async function getBooking(
+  id: number,
+): Promise<BookingsAPIResponse | null> {
   const { data, error, count } = await supabase
     .from("bookings")
     .select("*")
     .eq("id", id)
-    .single();
+    .single<BookingsAPIResponse>();
 
   if (error) {
     console.error(error);
@@ -79,7 +91,9 @@ export async function getBooking(id) {
   return data;
 }
 
-export async function getBookings(guestId) {
+export async function getBookings(
+  guestId: number,
+): Promise<BookingsAPIResponse[]> {
   const { data, error, count } = await supabase
     .from("bookings")
     // We actually also need data on the cabins as well. But let's ONLY take the data that we actually need, in order to reduce downloaded data.
@@ -94,13 +108,13 @@ export async function getBookings(guestId) {
     throw new Error("Bookings could not get loaded");
   }
 
-  return data;
+  return data as BookingsAPIResponse[];
 }
 
-export async function getBookedDatesByCabinId(cabinId) {
-  let today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-  today = today.toISOString();
+export async function getBookedDatesByCabinId(cabinId: number) {
+  const todayDate = new Date();
+  todayDate.setUTCHours(0, 0, 0, 0);
+  const today = todayDate.toISOString();
 
   // Getting all bookings
   const { data, error } = await supabase
@@ -128,14 +142,17 @@ export async function getBookedDatesByCabinId(cabinId) {
 }
 //
 export async function getSettings(): Promise<SettingsAPIResponse> {
-  const { data, error } = await supabase.from("settings").select("*").single();
+  const { data, error } = await supabase
+    .from("settings")
+    .select("*")
+    .single<SettingsAPIResponse>();
 
   if (error) {
     console.error(error);
     throw new Error("Settings could not be loaded");
   }
 
-  return data as SettingsAPIResponse;
+  return data;
 }
 //
 
@@ -154,8 +171,31 @@ export async function getCountries() {
 /////////////
 // CREATE
 
-export async function createGuest(newGuest) {
-  const { data, error } = await supabase.from("guests").insert([newGuest]);
+// export async function createGuest(
+//   newGuest: GuestsAPIResponse,
+// ): Promise<GuestsAPIResponse> {
+//   const { data, error } = await supabase
+//     .from("guests")
+//     .insert([newGuest])
+//     .select()
+//     .single<GuestsAPIResponse>();
+//
+//   if (error) {
+//     console.error(error);
+//     throw new Error("Guest could not be created");
+//   }
+//
+//   return data;
+// }
+
+export async function createGuest(
+  newGuest: CreateGuestInput,
+): Promise<GuestsAPIResponse> {
+  const { data, error } = await supabase
+    .from("guests")
+    .insert([newGuest])
+    .select()
+    .single<GuestsAPIResponse>();
 
   if (error) {
     console.error(error);
@@ -165,13 +205,15 @@ export async function createGuest(newGuest) {
   return data;
 }
 
-export async function createBooking(newBooking) {
+export async function createBooking(
+  newBooking: BookingsAPIResponse,
+): Promise<BookingsAPIResponse> {
   const { data, error } = await supabase
     .from("bookings")
     .insert([newBooking])
     // So that the newly created object gets returned!
     .select()
-    .single();
+    .single<BookingsAPIResponse>();
 
   if (error) {
     console.error(error);
@@ -218,7 +260,7 @@ export async function updateBooking(id, updatedFields) {
 /////////////
 // DELETE
 
-export async function deleteBooking(id) {
+export async function deleteBooking(id: number): Promise<void> {
   const { data, error } = await supabase.from("bookings").delete().eq("id", id);
 
   if (error) {
