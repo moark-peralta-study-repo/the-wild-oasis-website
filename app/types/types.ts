@@ -44,4 +44,12 @@ export type BookingsAPIResponse = {
     name: string;
     image: string;
   }[];
-}[];
+};
+
+export type CreateGuestInput = {
+  email: string;
+  fullName: string;
+  nationalId?: string;
+  nationality?: string;
+  countryFlag?: string;
+};
