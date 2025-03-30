@@ -1,9 +1,10 @@
 import { CabinsAPIResponse } from "@/app/types/types";
 
-type ReservationFormProps = {
+type Reservation = {
   cabin: CabinsAPIResponse;
 };
-function ReservationForm({ cabin }: ReservationFormProps) {
+
+function ReservationForm({ cabin }: ReservationProps) {
   // CHANGE
   const { maxCapacity } = cabin;
 
