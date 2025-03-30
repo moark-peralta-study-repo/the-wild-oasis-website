@@ -2,6 +2,7 @@ import CabinList, { FilterSize } from "@/app/_components/CabinList";
 import { Suspense } from "react";
 import Spinner from "@/app/_components/Spinner";
 import Filter from "@/app/_components/Filter";
+import ReservationReminder from "@/app/_components/ReservationReminder";
 
 type PageProps = {
   searchParams: Record<string, string | undefined>;
@@ -39,6 +40,7 @@ export default function Page({ searchParams }: PageProps) {
       </div>
       <Suspense key={filter} fallback={<Spinner />}>
         <CabinList filter={filter} />
+        <ReservationReminder />
       </Suspense>
     </div>
   );
