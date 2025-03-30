@@ -7,6 +7,7 @@ const josefin = Josefin_Sans({
 
 import "@/app/_styles/globals.css";
 import Header from "@/app/_components/Header";
+import { ReservationProvider } from "@/app/contexts/ReservationContext";
 
 type RootLayoutProps = {
   children: React.ReactNode;
@@ -28,8 +29,11 @@ function RootLayout({ children }: RootLayoutProps) {
         className={`bg-primary-950 text-primary-100 min-h-screen flex antialiased flex-col relative ${josefin.className}`}
       >
         <Header />
-        <div className="flex-1 px-8 py-12 grid ">
-          <main className="max-w-7xl mx-auto  w-full">{children}</main>
+        <div className="flex-1 px-8 py-12 grid">
+          <main className="max-w-7xl mx-auto w-full">
+            <ReservationProvider>{children}</ReservationProvider>
+            {/*{children}*/}
+          </main>
         </div>
         <footer>Copyright by The Wild Oasis</footer>
       </body>
