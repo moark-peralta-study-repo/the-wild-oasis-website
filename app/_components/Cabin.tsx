@@ -1,8 +1,13 @@
 import { EyeSlashIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/solid";
 import TextExpander from "@/app/_components/TextExpander";
 import Image from "next/image";
+import { CabinsAPIResponse } from "@/app/types/types";
 
-function Cabin({ cabin }) {
+type CabinProps = {
+  cabin: CabinsAPIResponse;
+};
+
+function Cabin({ cabin }: CabinProps) {
   const { id, name, maxCapacity, regularPrice, discount, image, description } =
     cabin;
   return (
