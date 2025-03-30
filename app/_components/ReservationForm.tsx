@@ -1,6 +1,6 @@
 import { CabinsAPIResponse } from "@/app/types/types";
 
-type Reservation = {
+type ReservationProps = {
   cabin: CabinsAPIResponse;
 };
 
