@@ -53,3 +53,8 @@ export type CreateGuestInput = {
   nationality?: string;
   countryFlag?: string;
 };
+
+export type UpdateGuestInput = Pick<
+  GuestsAPIResponse,
+  "nationality" | "nationalId" | "countryFlag"
+>;
