@@ -3,6 +3,7 @@ import { supabase } from "@/app/_lib/supabase";
 import {
   BookingsAPIResponse,
   CabinsAPIResponse,
+  CountriesAPIResponse,
   CreateGuestInput,
   GuestsAPIResponse,
   SettingsAPIResponse,
@@ -164,7 +165,7 @@ export async function getSettings(): Promise<SettingsAPIResponse> {
 }
 //
 
-export async function getCountries() {
+export async function getCountries(): Promise<CountriesAPIResponse> {
   try {
     const res = await fetch(
       "https://restcountries.com/v2/all?fields=name,flag",

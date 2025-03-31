@@ -1,5 +1,5 @@
 export type CabinsAPIResponse = {
-  id: number;
+  id: string;
   name: string;
   maxCapacity: number;
   regularPrice: number;
@@ -9,7 +9,7 @@ export type CabinsAPIResponse = {
 };
 
 export type SettingsAPIResponse = {
-  id: number;
+  id: string;
   created_at: string;
   minBookingLength: number;
   maxBookingLength: number;
@@ -24,7 +24,7 @@ export type UserAuthResponse = {
 };
 
 export type GuestsAPIResponse = {
-  id: number;
+  id: string;
   fullName: string;
   email: string;
   nationalId: number;
@@ -33,7 +33,7 @@ export type GuestsAPIResponse = {
 };
 
 export type BookingsAPIResponse = {
-  id: number;
+  id: string;
   created_at: string;
   status: string;
   startDate: string;
@@ -60,3 +60,9 @@ export type UpdateGuestInput = Pick<
   GuestsAPIResponse,
   "nationality" | "nationalId" | "countryFlag"
 >;
+
+export type CountriesAPIResponse = {
+  name: string;
+  flag: string;
+  independent: boolean;
+}[];
