@@ -5,6 +5,7 @@ import { supabase } from "@/app/_lib/supabase";
 import { UpdateGuestInput } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 import { getBookings } from "@/app/_lib/data-service";
+import { redirect } from "next/navigation";
 
 export async function signInAction() {
   await signIn("google", {
@@ -51,7 +52,7 @@ export async function updateGuestAction(formData: FormData) {
   revalidatePath("/account/profile");
 }
 
-export async function deleteReservationAction(reservationId: string) {
+export async function deleteReservationAction(reservationId: number) {
   const session = await auth();
 
   if (!session || !session.user?.id) {
@@ -60,7 +61,7 @@ export async function deleteReservationAction(reservationId: string) {
   const guestBookings = await getBookings(Number(session.user.id));
 
   const guestBookingIds = guestBookings.map((booking) => booking.id);
-  if (!guestBookingIds.includes(reservationId)) {
+  if (!guestBookingIds.includes(reservationId.toString())) {
     throw new Error("You are not allowed to delete this booking");
   }
 
@@ -75,4 +76,41 @@ export async function deleteReservationAction(reservationId: string) {
   }
 
   revalidatePath("/account/reservations");
+}
+
+export async function updateBookingAction(formData: FormData) {
+  const numGuests = Number(formData.get("numGuests"));
+  const observations = formData.get("observations")!.slice(0, 1000);
+  const reservationId = formData.get("reservationId");
+
+  const updateData = { numGuests, observations };
+
+  const session = await auth();
+
+  if (!session || !session.user?.id || !reservationId) {
+    throw new Error("You must be logged in");
+  }
+
+  const guestBookings = await getBookings(Number(session.user.id));
+
+  const guestBookingIds = guestBookings.map((booking) => String(booking.id));
+
+  if (!guestBookingIds.includes(reservationId.toString())) {
+    throw new Error("Your are not allowed to update this booking");
+  }
+
+  const { error } = await supabase
+    .from("bookings")
+    .update(updateData)
+    .eq("id", reservationId);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be updated");
+  }
+
+  revalidatePath(`/account/reservations/edit/${reservationId}`);
+  revalidatePath(`/account/reservations`);
+
+  redirect("/account/reservations");
 }
