@@ -2,6 +2,7 @@
 
 import { GuestsAPIResponse } from "@/app/types/types";
 import { updateGuestAction } from "@/app/_lib/actions";
+import { useFormStatus } from "react-dom";
 
 type UpdateProfileFormProps = {
   children: React.ReactNode;
@@ -47,6 +48,8 @@ function UpdateProfileForm({ children, guest }: UpdateProfileFormProps) {
         </div>
       </div>
 
+      {children}
+
       <div className="space-y-2">
         <label htmlFor="nationalId">National ID number</label>
         <input
@@ -57,13 +60,23 @@ function UpdateProfileForm({ children, guest }: UpdateProfileFormProps) {
       </div>
 
       <div className="flex justify-end items-center gap-6">
-        <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
-          Update profile
-        </button>
+        <Button />
       </div>
-      {children}
     </form>
   );
 }
 
 export default UpdateProfileForm;
+
+function Button() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      disabled={pending}
+      className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300"
+    >
+      {pending ? "Updating..." : "Update profile"}
+    </button>
+  );
+}
