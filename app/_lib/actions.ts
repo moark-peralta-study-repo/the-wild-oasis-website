@@ -4,6 +4,7 @@ import { auth, signIn, signOut } from "@/app/_lib/auth";
 import { supabase } from "@/app/_lib/supabase";
 import { UpdateGuestInput } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
+import { getBookings } from "@/app/_lib/data-service";
 
 export async function signInAction() {
   await signIn("google", {
@@ -22,7 +23,6 @@ export async function updateGuestAction(formData: FormData) {
   if (!session) {
     throw new Error("You must be logged in");
   }
-  console.log(formData);
 
   const nationalIdValue = formData.get("nationalId");
   if (!nationalIdValue) throw new Error("National ID is required");
@@ -49,4 +49,30 @@ export async function updateGuestAction(formData: FormData) {
   }
 
   revalidatePath("/account/profile");
+}
+
+export async function deleteReservationAction(reservationId: string) {
+  const session = await auth();
+
+  if (!session || !session.user?.id) {
+    throw new Error("You must be logged in");
+  }
+  const guestBookings = await getBookings(Number(session.user.id));
+
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
+  if (!guestBookingIds.includes(reservationId)) {
+    throw new Error("You are not allowed to delete this booking");
+  }
+
+  const { error } = await supabase
+    .from("bookings")
+    .delete()
+    .eq("id", reservationId);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be deleted");
+  }
+
+  revalidatePath("/account/reservations");
 }
