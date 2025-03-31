@@ -94,11 +94,11 @@ export async function getBooking(
 export async function getBookings(
   guestId: number,
 ): Promise<BookingsAPIResponse[]> {
-  const { data, error, count } = await supabase
+  const { data, error } = await supabase
     .from("bookings")
     // We actually also need data on the cabins as well. But let's ONLY take the data that we actually need, in order to reduce downloaded data.
     .select(
-      "id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, cabinId, cabins(name, image)",
+      "id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, cabinId, status, cabins(name, image)",
     )
     .eq("guestId", guestId)
     .order("startDate");
@@ -225,7 +225,7 @@ export async function createBooking(
 
 /////////////
 // UPDATE
-
+/*
 // The updatedFields is an object which should ONLY contain the updated data
 export async function updateGuest(id, updatedFields) {
   const { data, error } = await supabase
@@ -269,3 +269,4 @@ export async function deleteBooking(id: number): Promise<void> {
   }
   return data;
 }
+*/

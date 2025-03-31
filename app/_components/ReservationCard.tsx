@@ -22,7 +22,7 @@ function ReservationCard({ booking }: ReservationCardProps) {
     totalPrice,
     numGuests,
     created_at,
-    cabins: { name, image },
+    cabins: [{ name, image }],
     // guestId,
     // status,
   } = booking;
