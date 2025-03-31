@@ -34,6 +34,8 @@ export type GuestsAPIResponse = {
 
 export type BookingsAPIResponse = {
   id: number;
+  created_at: string;
+  status: string;
   startDate: string;
   endDate: string;
   numNights: number;
