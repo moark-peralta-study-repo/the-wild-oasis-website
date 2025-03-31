@@ -38,10 +38,14 @@ export type BookingsAPIResponse = {
   status: string;
   startDate: string;
   endDate: string;
+  observations: string;
   numNights: number;
   numGuests: number;
   totalPrice: number;
   guestId: number;
+  maxCapacity: number;
+  bookingId: number;
+  cabinId: number;
   cabins: {
     name: string;
     image: string;
