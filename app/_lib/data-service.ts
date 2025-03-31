@@ -108,7 +108,15 @@ export async function getBookings(
     throw new Error("Bookings could not get loaded");
   }
 
-  return data as BookingsAPIResponse[];
+  //checks if booking.cabins is an array else it converts it into one
+  const transformedData = data.map((booking) => {
+    return {
+      ...booking,
+      cabins: Array.isArray(booking.cabins) ? booking.cabins : [booking.cabins],
+    };
+  });
+
+  return transformedData as BookingsAPIResponse[];
 }
 
 export async function getBookedDatesByCabinId(cabinId: number) {
