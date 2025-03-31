@@ -27,7 +27,7 @@ export type GuestsAPIResponse = {
   id: number;
   fullName: string;
   email: string;
-  nationalId: string;
+  nationalId: number;
   nationality: string;
   countryFlag: string;
 };
@@ -49,7 +49,7 @@ export type BookingsAPIResponse = {
 export type CreateGuestInput = {
   email: string;
   fullName: string;
-  nationalId?: string;
+  nationalId?: number;
   nationality?: string;
   countryFlag?: string;
 };

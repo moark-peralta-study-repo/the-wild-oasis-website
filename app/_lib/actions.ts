@@ -22,17 +22,18 @@ export async function updateGuestAction(formData: FormData) {
   if (!session) {
     throw new Error("You must be logged in");
   }
+  console.log(formData);
 
   const nationalIdValue = formData.get("nationalId");
   if (!nationalIdValue) throw new Error("National ID is required");
-  const nationalId = nationalIdValue.toString();
+  const nationalId = Number(nationalIdValue);
 
   const nationalityValue = formData.get("nationality") as string;
 
   if (!nationalityValue) throw new Error("Nationality is required");
   const [nationality, countryFlag] = nationalityValue.split("%");
 
-  if (!/^[a-zA-Z0-9]{6,12}$/.test(nationalId))
+  if (!/^[a-zA-Z0-9]{6,12}$/.test(String(nationalId)))
     throw new Error("Please enter a valid National ID");
 
   const updateData: UpdateGuestInput = { nationality, countryFlag, nationalId };
