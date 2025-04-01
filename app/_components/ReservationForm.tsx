@@ -1,14 +1,60 @@
-// "use client";
+"use client";
 
 import { CabinsAPIResponse, UserAuthResponse } from "@/app/types/types";
+import { useReservation } from "@/app/contexts/ReservationContext";
+import { createBookingAction } from "@/app/_lib/actions";
+import { differenceInDays } from "date-fns";
+import SubmitButton from "@/app/_components/SubmitButton";
 
 type ReservationProps = {
   cabin: CabinsAPIResponse;
   user: UserAuthResponse;
 };
 
+type BookingData = {
+  startDate: Date;
+  endDate: Date;
+  numNights: number;
+  cabinPrice: number;
+  cabinId: number;
+};
+
 function ReservationForm({ cabin, user }: ReservationProps) {
-  const { maxCapacity } = cabin;
+  const { maxCapacity, regularPrice, discount, id } = cabin;
+  const { range, resetRange } = useReservation();
+
+  const startDate = range?.from;
+  const endDate = range?.to;
+
+  // const numNights = differenceInDays(endDate, startDate);
+  const numNights =
+    startDate && endDate ? differenceInDays(endDate, startDate) : 0;
+  const cabinPrice = numNights * (regularPrice - discount);
+
+  const getSubmitAction = () => {
+    if (!startDate || !endDate) return null;
+    const bookingData: BookingData = {
+      startDate,
+      endDate,
+      numNights,
+      cabinPrice,
+      cabinId: id,
+    };
+    return createBookingAction.bind(null, bookingData);
+  };
+
+  // const bookingData = {
+  //   startDate,
+  //   endDate,
+  //   numNights,
+  //   cabinPrice,
+  //   cabinId: id,
+  // };
+
+  // const createBookingWithData = createBookingAction.bind(
+  //   null,
+  //   getBookingData(),
+  // );
 
   return (
     <div className="scale-[1.01]">
@@ -27,7 +73,17 @@ function ReservationForm({ cabin, user }: ReservationProps) {
         </div>
       </div>
 
-      <form className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col">
+      <form
+        // action={createBookingWithData}
+        action={async (formData) => {
+          const submitAction = getSubmitAction();
+          if (submitAction) {
+            await submitAction(formData);
+            resetRange();
+          }
+        }}
+        className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col"
+      >
         <div className="space-y-2">
           <label htmlFor="numGuests">How many guests?</label>
           <select
@@ -59,12 +115,16 @@ function ReservationForm({ cabin, user }: ReservationProps) {
           />
         </div>
 
-        <div className="flex austify-end items-center gap-6">
-          <p className="text-primary-300 text-base">Start by selecting dates</p>
-
-          <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
-            Reserve now
-          </button>
+        <div className="flex justify-end items-center gap-6">
+          {!(startDate && endDate) ? (
+            <p className="text-primary-300 text-base">
+              Start by selecting dates
+            </p>
+          ) : (
+            <SubmitButton pendingLabel={"Reserving..."}>
+              Reserve now
+            </SubmitButton>
+          )}
         </div>
       </form>
     </div>
