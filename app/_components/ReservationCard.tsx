@@ -12,9 +12,10 @@ export const formatDistanceFromNow = (dateStr: string) =>
 
 type ReservationCardProps = {
   booking: BookingsAPIResponse;
+  onDelete: (id: number) => void;
 };
 
-function ReservationCard({ booking }: ReservationCardProps) {
+function ReservationCard({ booking, onDelete }: ReservationCardProps) {
   const {
     id,
     startDate,
@@ -85,7 +86,7 @@ function ReservationCard({ booking }: ReservationCardProps) {
               <PencilSquareIcon className="h-5 w-5 text-primary-600 group-hover:text-primary-800 transition-colors" />
               <span className="mt-1">Edit</span>
             </Link>
-            <DeleteReservation bookingId={id} />{" "}
+            <DeleteReservation reservationId={id} onDelete={onDelete} />{" "}
           </>
         ) : null}
       </div>
