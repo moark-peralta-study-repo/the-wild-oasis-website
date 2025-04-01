@@ -58,10 +58,18 @@ export async function deleteReservationAction(reservationId: number) {
   if (!session || !session.user?.id) {
     throw new Error("You must be logged in");
   }
-  const guestBookings = await getBookings(Number(session.user.id));
+  // const guestBookings = await getBookings(Number(session.user.id));
+  //
+  // const guestBookingIds = guestBookings.map((booking) => booking.id);
+  // if (!guestBookingIds.includes(reservationId.toString())) {
+  //   throw new Error("You are not allowed to delete this booking");
+  // }
+
+  const guestBookings = await getBookings(session.user.id);
 
   const guestBookingIds = guestBookings.map((booking) => booking.id);
-  if (!guestBookingIds.includes(reservationId.toString())) {
+
+  if (!guestBookingIds.includes(reservationId)) {
     throw new Error("You are not allowed to delete this booking");
   }
 
