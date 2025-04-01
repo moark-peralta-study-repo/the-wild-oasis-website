@@ -1,5 +1,5 @@
 export type CabinsAPIResponse = {
-  id: string;
+  id: number;
   name: string;
   maxCapacity: number;
   regularPrice: number;
