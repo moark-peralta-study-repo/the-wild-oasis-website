@@ -1,18 +1,26 @@
 "use client";
 
-import { isWithinInterval } from "date-fns";
-import { DayPicker } from "react-day-picker";
+import {
+  differenceInDays,
+  isPast,
+  isSameDay,
+  isWithinInterval,
+} from "date-fns";
+import { DateRange, DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { CabinsAPIResponse, SettingsAPIResponse } from "@/app/types/types";
 import { useReservation } from "@/app/contexts/ReservationContext";
 
-function isAlreadyBooked(range, datesArr) {
-  return (
-    range.from &&
-    range.to &&
-    datesArr.some((date) =>
-      isWithinInterval(date, { start: range.from, end: range.to }),
-    )
+function isAlreadyBooked(
+  range: DateRange | undefined,
+  datesArr: Date[],
+): boolean {
+  return Boolean(
+    range?.from &&
+      range?.to &&
+      datesArr.some((date) =>
+        isWithinInterval(date, { start: range.from!, end: range.to! }),
+      ),
   );
 }
 
@@ -25,20 +33,26 @@ type DateSelectorProps = {
 function DateSelector({ settings, cabin, bookedDates }: DateSelectorProps) {
   const { range, setRange, resetRange } = useReservation();
 
-  // CHANGE
-  const regularPrice = 23;
-  const discount = 23;
-  const numNights = 23;
-  const cabinPrice = 23;
+  const { regularPrice, discount } = cabin;
 
-  // SETTINGS
+  const displayRange: DateRange | undefined = isAlreadyBooked(
+    range,
+    bookedDates,
+  )
+    ? undefined
+    : range;
+
+  const numNights =
+    range?.from && range?.to ? differenceInDays(range.to, range.from) : 0;
+  const cabinPrice = numNights * (regularPrice - discount);
+
   const { minBookingLength, maxBookingLength } = settings;
 
   return (
     <div className="flex flex-col justify-between">
       <DayPicker
         onSelect={setRange}
-        selected={range}
+        selected={displayRange}
         className="pt-12 place-self-center"
         mode="range"
         min={minBookingLength + 1}
@@ -48,6 +62,10 @@ function DateSelector({ settings, cabin, bookedDates }: DateSelectorProps) {
         toYear={new Date().getFullYear() + 5}
         captionLayout="dropdown"
         numberOfMonths={2}
+        disabled={(curDate) =>
+          isPast(curDate) ||
+          bookedDates.some((date) => isSameDay(date, curDate))
+        }
       />
 
       <div className="flex items-center justify-between px-8 bg-accent-500 text-primary-800 h-[72px]">
@@ -65,7 +83,7 @@ function DateSelector({ settings, cabin, bookedDates }: DateSelectorProps) {
             )}
             <span className="">/night</span>
           </p>
-          {numNights ? (
+          {numNights > 0 ? (
             <>
               <p className="bg-accent-600 px-3 py-2 text-2xl">
                 <span>&times;</span> <span>{numNights}</span>
@@ -78,7 +96,7 @@ function DateSelector({ settings, cabin, bookedDates }: DateSelectorProps) {
           ) : null}
         </div>
 
-        {range.from || range.to ? (
+        {range?.from || range?.to ? (
           <button
             className="border border-primary-800 py-2 px-4 text-sm font-semibold"
             onClick={resetRange}
