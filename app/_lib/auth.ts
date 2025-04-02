@@ -20,6 +20,7 @@ interface CustomSession extends Session {
 }
 
 const authConfig = {
+  trust: true,
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_CLIENT_ID,
